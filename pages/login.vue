@@ -73,6 +73,7 @@
               </v-row>
               <div class="text-center">
                 <div>
+                  <p class="red--text">{{ errorMsg }}</p>
                   <v-btn
                     color="primary mt-3"
                     width="180"
@@ -122,12 +123,7 @@
                 </v-row>
                 <div class="text-center">
                   <div>
-                    <v-btn
-                      color="primary mt-3"
-                      width="180"
-                      height="44"
-                      tile
-                      @click="registration"
+                    <v-btn color="primary mt-3" width="180" height="44" tile
                       >Send</v-btn
                     >
                   </div>
@@ -285,6 +281,7 @@ export type DataType = {
   passwordResetModal: boolean
   passwordResetEmail: string
   isSendPasswordResetMail: boolean
+  errorMsg: string
 }
 
 export default Vue.extend({
@@ -305,6 +302,7 @@ export default Vue.extend({
       passwordResetModal: false,
       passwordResetEmail: '',
       isSendPasswordResetMail: false,
+      errorMsg: '',
     }
   },
 
@@ -315,25 +313,6 @@ export default Vue.extend({
 
     openSignUpModal(): void {
       this.signUpModal = true
-    },
-
-    registration(): void {
-      const name = this.registerEmail.split('@')[0]
-      this.$axios
-        .$post('users/registration', {
-          email: this.registerEmail,
-          username: name,
-          email_template_id: '3db5f39b-f26d-4e99-b4a6-da9d479444f8',
-          registration_path: '/password/new',
-          registration_domain: 'http://localhost:3000',
-          hostname: 'localhost:3000',
-        })
-        .then(() => {
-          this.isSendMail = true
-        })
-        .catch((err) => {
-          console.log(err)
-        })
     },
 
     login(): void {
@@ -350,6 +329,7 @@ export default Vue.extend({
           this.getWorkSpace()
         })
         .catch((err) => {
+          this.errorMsg = 'メールアドレスまたはパスワードをご確認ください'
           console.log(err)
         })
     },

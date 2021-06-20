@@ -59,7 +59,7 @@
                 <v-col cols="6">
                   <ValidationProvider
                     v-slot="{ errors }"
-                    rules="min:8|required"
+                    rules="|required"
                     name="password"
                   >
                     <v-text-field
@@ -84,7 +84,20 @@
                   >
                 </div>
                 <div class="mt-4">
-                  <p @click="passwordResetModal = true">Forgot password</p>
+                  <p
+                    class="text-decoration-underline"
+                    @click="passwordResetModal = true"
+                  >
+                    Forgot password
+                  </p>
+                </div>
+                <div class="mt-4">
+                  <p
+                    class="text-decoration-underline"
+                    @click="loginModal = false"
+                  >
+                    キャンセル
+                  </p>
                 </div>
               </div>
             </v-col>

@@ -22,7 +22,7 @@
               <v-col cols="6">
                 <ValidationProvider
                   v-slot="{ errors }"
-                  rules="min:8|required"
+                  rules="|required"
                   name="password"
                 >
                   <v-text-field
@@ -38,7 +38,7 @@
               <v-col cols="6">
                 <ValidationProvider
                   v-slot="{ errors }"
-                  rules="min:8|required"
+                  rules="|required"
                   name="password"
                 >
                   <v-text-field

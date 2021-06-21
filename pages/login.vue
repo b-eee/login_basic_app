@@ -339,10 +339,22 @@ export default Vue.extend({
           this.$axios.defaults.headers.common.Authorization = `Bearer ${this.$cookies.get(
             'token'
           )}`
-          this.getWorkSpace()
+          this.getUserData()
         })
         .catch((err) => {
           this.errorMsg = 'メールアドレスまたはパスワードをご確認ください'
+          console.log(err)
+        })
+    },
+
+    getUserData(): void {
+      this.$axios
+        .$get('userinfo')
+        .then((data) => {
+          this.$cookies.set('userData', data)
+          this.getWorkSpace()
+        })
+        .catch((err) => {
           console.log(err)
         })
     },

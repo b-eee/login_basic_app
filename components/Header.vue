@@ -2,7 +2,9 @@
   <div class="border-bottom font-weight-bold">
     <v-row class="pa-5 ma-0">
       <v-col cols="6">
-        <p class="text-h5 ma-0">Sample App</p>
+        <router-link to="/" class="text-decoration-none">
+          <p class="text-h5 ma-0 black--text">Sample App</p>
+        </router-link>
       </v-col>
       <v-col v-if="isGuest" cols="6" class="text-right">
         <p
@@ -26,12 +28,24 @@
         >
           Logout
         </p>
-        <p
-          class="mx-4 black--text d-inline text-decoration-underline"
-          @click="execParentFunction('openUserModal')"
-        >
-          {{ name }}
-        </p>
+        <v-menu offset-y>
+          <template #activator="{ on, attrs }">
+            <p
+              class="mx-4 black--text d-inline text-decoration-underline"
+              v-bind="attrs"
+              v-on="on"
+            >
+              {{ name }}
+            </p>
+          </template>
+          <v-list>
+            <v-list-item v-for="(item, index) in items" :key="index">
+              <v-list-item-title @click="execParentFunction(item.action)">
+                {{ item.title }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </v-col>
     </v-row>
     <v-row v-if="!isGuest" class="mt-4 mb-4">
@@ -61,8 +75,19 @@ export default Vue.extend({
     },
   },
 
+  data() {
+    return {
+      items: [
+        { title: 'User Profile', action: 'openUserModal' },
+        { title: 'Change Password', action: 'openChangePasswordModal' },
+        { title: 'Admin Users', action: 'pushAdminUsers' },
+      ],
+    }
+  },
+
   methods: {
     execParentFunction(functionName: string): void {
+      console.log(functionName)
       this.$emit(functionName)
     },
   },

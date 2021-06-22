@@ -88,7 +88,6 @@ export default Vue.extend({
     UserModal,
     ChangePasswordModal,
   },
-
   props: {
     isGuest: {
       type: Boolean,
@@ -117,7 +116,6 @@ export default Vue.extend({
     },
 
     switchUserModal(): void {
-      console.log('aaa')
       this.userModal = !this.userModal
     },
 

@@ -199,6 +199,11 @@
                     >Go</v-btn
                   >
                 </div>
+                <div class="mt-4">
+                  <p class="text-decoration-underline" @click="logout">
+                    logout
+                  </p>
+                </div>
               </div>
             </v-col>
           </v-row>
@@ -339,7 +344,7 @@ export default Vue.extend({
           this.$axios.defaults.headers.common.Authorization = `Bearer ${this.$cookies.get(
             'token'
           )}`
-          this.getUserData()
+          this.getHexebaseUserData()
         })
         .catch((err) => {
           this.errorMsg = 'メールアドレスまたはパスワードをご確認ください'
@@ -347,9 +352,63 @@ export default Vue.extend({
         })
     },
 
-    getUserData(): void {
+    getHexebaseUserData(): void {
       this.$axios
         .$get('userinfo')
+        .then((data) => {
+          if (data.is_ws_admin) {
+            this.$cookies.set('is_ws_admin', true)
+          } else {
+            this.$cookies.set('is_ws_admin', false)
+          }
+          this.$cookies.set('userData', data)
+          this.getUserData()
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    getUserData(): void {
+      this.$axios
+        .$post('applications/samplelogin2/datastores/users/items/search', {
+          conditions: [
+            {
+              id: 'email',
+              search_value: [this.$cookies.get('userData').email],
+              exact_match: true,
+            },
+          ],
+          page: 1,
+          per_page: 0,
+          use_display_id: true,
+        })
+        .then((data) => {
+          if (data.totalItems === 0) {
+            this.createUserDataToMyDB()
+          } else if (data.items[0].status === 'suspended') {
+            this.errorMsg = 'アクセス権限のないアカウントです'
+            this.$cookies.remove('token')
+          } else {
+            this.$cookies.set('userData', data.items[0])
+            this.getWorkSpace()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    createUserDataToMyDB(): void {
+      this.$axios
+        .$post('applications/samplelogin2/datastores/users/items/new', {
+          item: {
+            username: this.$cookies.get('userData').username,
+            email: this.$cookies.get('userData').email,
+            user_id: this.$cookies.get('userData').u_id,
+          },
+          return_item_result: true,
+        })
         .then((data) => {
           this.$cookies.set('userData', data)
           this.getWorkSpace()
@@ -385,6 +444,11 @@ export default Vue.extend({
         .catch((err) => {
           console.log(err)
         })
+    },
+
+    logout(): void {
+      this.$cookies.remove('token')
+      this.workspaceModal = false
     },
   },
 })

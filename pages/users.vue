@@ -3,7 +3,6 @@
     <Header
       :is-guest="false"
       :name="$cookies.get('userData').username"
-      @logout="logout"
     ></Header>
     <div>
       <v-responsive class="mx-10 mt-16">
@@ -20,35 +19,13 @@
         </v-row>
       </v-responsive>
     </div>
-
-    <v-dialog v-model="userModal" width="680" persistent>
+    <v-dialog v-model="statusModal" width="680" persistent>
       <v-card class="modal">
         <v-row justify="center" align-content="center" style="height: 100%">
           <v-col cols="12">
             <p class="text-center font-weight-bold text-h4">UserProfile</p>
             <v-row justify="center">
               <v-col cols="6">
-                <ValidationProvider
-                  v-slot="{ errors }"
-                  rules="email"
-                  name="email"
-                >
-                  <v-text-field
-                    v-model="userData.email"
-                    label="email"
-                    :error-messages="errors"
-                  ></v-text-field>
-                </ValidationProvider>
-                <v-text-field
-                  v-model="userData.username"
-                  label="name"
-                ></v-text-field>
-                <v-textarea
-                  v-model="userData.note"
-                  solo
-                  name="input-7-4"
-                  label="note"
-                ></v-textarea>
                 <v-select
                   v-model="userData.status"
                   :items="status"
@@ -60,7 +37,10 @@
             </v-row>
             <v-row class="text-center">
               <v-col cols="6">
-                <p class="text-decoration-underline" @click="userModal = false">
+                <p
+                  class="text-decoration-underline"
+                  @click="statusModal = false"
+                >
                   キャンセル
                 </p>
               </v-col>
@@ -92,20 +72,17 @@ export type headers = {
 
 /* eslint-disable camelcase */
 export type userData = {
-  email: string
-  username: string
-  status: string
-  note: string
   i_id: string
-  user_id: string
+  status: string
 }
 
 export type DataType = {
   headers: headers[]
   items: []
-  userModal: boolean
   userData: userData
   status: headers[]
+  userStatus: string
+  statusModal: boolean
 }
 
 export default Vue.extend({
@@ -116,7 +93,7 @@ export default Vue.extend({
       headers: [
         {
           text: 'name',
-          value: 'name',
+          value: 'username',
         },
         {
           text: 'email',
@@ -139,16 +116,17 @@ export default Vue.extend({
       items: [],
       status: [
         {
-          value: 'signup completed',
-          text: 'signup completed',
+          value: 'active',
+          text: 'active',
         },
         {
-          value: 'suspend',
-          text: 'suspend',
+          value: 'suspended',
+          text: 'suspended',
         },
       ],
       userData: {},
-      userModal: false,
+      userStatus: '',
+      statusModal: false,
     } as DataType
   },
 
@@ -162,7 +140,6 @@ export default Vue.extend({
       })
       .then((data) => {
         this.items = data.items
-        console.log(this.items)
       })
       .catch((err) => {
         console.log(err)
@@ -170,28 +147,25 @@ export default Vue.extend({
   },
 
   methods: {
-    editUserData(item: object): void {
+    editUserData(item: any): void {
       this.userData = item
-      this.userModal = true
+      this.statusModal = true
     },
 
     updateUserData(): void {
       const items = {
         item: {
-          email: this.userData.email,
-          username: this.userData.username,
           status: this.userData.status,
-          note: this.userData.note,
         },
         is_force_update: true,
         return_item_result: true,
         action_id: '',
       }
 
-      if (this.userData.status === 'suspend') {
+      if (this.userData.status === 'suspended') {
         items.action_id = 'suspendAccount'
       } else {
-        items.action_id = 'signupCompleted'
+        items.action_id = 'active'
       }
 
       this.$axios
@@ -200,23 +174,7 @@ export default Vue.extend({
           items
         )
         .then(() => {
-          this.updateUserDataToHexabase()
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    },
-
-    updateUserDataToHexabase(): void {
-      this.$axios
-        .$put('userinfo', {
-          email: this.userData.email,
-          username: this.userData.username,
-          user_id: this.userData.user_id,
-        })
-        .then(() => {
-          this.$cookies.set('userData', this.userData)
-          this.userModal = false
+          this.statusModal = false
         })
         .catch((err) => {
           console.log(err)

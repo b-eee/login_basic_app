@@ -10,3 +10,9 @@ export default Vue.extend({
   middleware: ['auth'],
 })
 </script>
+
+<style>
+.modal {
+  overflow: hidden;
+}
+</style>

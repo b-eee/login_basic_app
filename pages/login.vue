@@ -361,7 +361,7 @@ export default Vue.extend({
           } else {
             this.$cookies.set('is_ws_admin', false)
           }
-          this.$cookies.set('userData', data)
+          this.$cookies.set('hexaUserData', data)
           this.getUserData()
         })
         .catch((err) => {
@@ -374,8 +374,8 @@ export default Vue.extend({
         .$post('applications/samplelogin2/datastores/users/items/search', {
           conditions: [
             {
-              id: 'email',
-              search_value: [this.$cookies.get('userData').email],
+              id: 'user_id',
+              search_value: [this.$cookies.get('hexaUserData').u_id],
               exact_match: true,
             },
           ],

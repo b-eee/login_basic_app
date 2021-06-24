@@ -35,7 +35,11 @@
               v-bind="attrs"
               v-on="on"
             >
-              {{ name }}
+              {{
+                $cookies.get('hexaUserData').username
+                  ? $cookies.get('hexaUserData').username
+                  : '新規ユーザー'
+              }}
             </p>
           </template>
           <v-list>
@@ -89,10 +93,6 @@ export default Vue.extend({
     isGuest: {
       type: Boolean,
       default: false,
-    },
-    name: {
-      type: String,
-      default: '',
     },
   },
 

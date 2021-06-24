@@ -5,7 +5,8 @@
       :name="$cookies.get('userData').username"
     ></Header>
     <div>
-      <v-responsive class="mx-10 mt-16">
+      <div v-if="isLoading"></div>
+      <v-responsive v-else class="mx-10 mt-16">
         <p class="text-h4">Users list</p>
 
         <v-row>
@@ -88,13 +89,20 @@ export type userData = {
   status: string
 }
 
+export type detailUser = {
+  user: object
+  i_id: string
+}
+
 export type DataType = {
   headers: headers[]
-  items: []
+  items: detailUser[]
   userData: userData
   status: headers[]
   userStatus: string
   statusModal: boolean
+  isLoading: boolean
+  itemLength: number
 }
 
 export default Vue.extend({
@@ -105,11 +113,11 @@ export default Vue.extend({
       headers: [
         {
           text: 'name',
-          value: 'username',
+          value: 'user.field_values[1].value[0].user_name',
         },
         {
           text: 'email',
-          value: 'email',
+          value: 'user.field_values[1].value[0].email',
         },
         {
           text: 'status',
@@ -125,7 +133,9 @@ export default Vue.extend({
           sortable: false,
         },
       ],
-      items: [],
+      isLoading: true,
+      items: {},
+      itemLength: 0,
       status: [
         {
           value: 'active',
@@ -169,6 +179,7 @@ export default Vue.extend({
           items
         )
         .then(() => {
+          this.isLoading = true
           this.getUsers()
         })
         .catch((err) => {
@@ -176,20 +187,42 @@ export default Vue.extend({
         })
     },
 
-    getUsers(): void {
-      this.$axios
+    async getUsers() {
+      await this.$axios
         .$post('applications/samplelogin2/datastores/users/items/search', {
           conditions: [],
           page: 1,
           per_page: 0,
           use_display_id: true,
+          include_links: true,
         })
         .then((data) => {
           this.items = data.items
+          this.itemLength = data.totalItems
+          this.getDetailUser()
         })
         .catch((err) => {
           console.log(err)
         })
+    },
+
+    async getDetailUser() {
+      for (let i = 0; i < this.itemLength; i++) {
+        this.items[i].user = await this.test(this.items[i].i_id)
+      }
+      this.isLoading = false
+    },
+
+    async test(id: string) {
+      const userDetail = await this.$axios
+        .$get(`applications/samplelogin2/datastores/users/items/details/${id}`)
+        .then((data) => {
+          return data
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      return userDetail
     },
   },
 })

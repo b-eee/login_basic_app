@@ -14,6 +14,7 @@
                 v-model="oldPassword"
                 label="old password"
                 :error-messages="errors"
+                type="password"
               ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
@@ -25,6 +26,7 @@
                 v-model="newPassword"
                 label="new password"
                 :error-messages="errors"
+                type="password"
               ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
@@ -36,6 +38,7 @@
                 v-model="confirmPassword"
                 label="comfirm password"
                 :error-messages="errors"
+                type="password"
               ></v-text-field>
             </ValidationProvider>
           </v-col>

@@ -91,25 +91,7 @@ export default Vue.extend({
   },
 
   created() {
-    this.$axios
-      .$post('applications/samplelogin2/datastores/users/items/search', {
-        conditions: [
-          {
-            id: 'email',
-            search_value: [this.$cookies.get('userData').email],
-            exact_match: true,
-          },
-        ],
-        page: 1,
-        per_page: 0,
-        use_display_id: true,
-      })
-      .then((data) => {
-        this.userData = data.items[0]
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    this.getUser()
   },
 
   methods: {
@@ -151,6 +133,28 @@ export default Vue.extend({
         })
     },
 
+    getUser(): void {
+      this.$axios
+        .$post('applications/samplelogin2/datastores/users/items/search', {
+          conditions: [
+            {
+              id: 'email',
+              search_value: [this.$cookies.get('userData').email],
+              exact_match: true,
+            },
+          ],
+          page: 1,
+          per_page: 0,
+          use_display_id: true,
+        })
+        .then((data) => {
+          this.userData = data.items[0]
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
     updateUserDataToHexabase(): void {
       this.$axios
         .$put('userinfo', {
@@ -159,6 +163,7 @@ export default Vue.extend({
           user_id: this.userData.user_id[0].user_id,
         })
         .then(() => {
+          this.getUser()
           this.$emit('switchUserModal')
         })
         .catch((err) => {

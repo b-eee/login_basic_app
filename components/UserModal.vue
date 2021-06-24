@@ -16,14 +16,6 @@
               v-model="userData.username"
               label="name"
             ></v-text-field>
-            <v-text-field
-              v-model="userData.company"
-              label="company"
-            ></v-text-field>
-            <v-text-field
-              v-model="userData.department"
-              label="department"
-            ></v-text-field>
             <v-textarea
               v-model="userData.note"
               solo
@@ -31,6 +23,7 @@
               label="note"
             ></v-textarea>
             <v-select
+              v-model="userData.status"
               :items="status"
               item-text="text"
               item-value="value"
@@ -65,12 +58,10 @@ import Vue from 'vue'
 export type userData = {
   email: string
   username: string
-  company: string
-  department: string
   status: string
-  user_id: string
   i_id: string
   note: string
+  user_id: { [user_id: string]: string }
 }
 
 export default Vue.extend({
@@ -81,10 +72,8 @@ export default Vue.extend({
       userData: {
         email: '',
         username: '',
-        company: '',
-        department: '',
         status: '',
-        user_id: '',
+        user_id: [{ user_id: '' }],
         i_id: '',
         note: '',
       },
@@ -102,7 +91,25 @@ export default Vue.extend({
   },
 
   created() {
-    this.userData = this.$cookies.get('userData')
+    this.$axios
+      .$post('applications/samplelogin2/datastores/users/items/search', {
+        conditions: [
+          {
+            id: 'email',
+            search_value: [this.$cookies.get('userData').email],
+            exact_match: true,
+          },
+        ],
+        page: 1,
+        per_page: 0,
+        use_display_id: true,
+      })
+      .then((data) => {
+        this.userData = data.items[0]
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   },
 
   methods: {
@@ -116,8 +123,6 @@ export default Vue.extend({
           email: this.userData.email,
           username: this.userData.username,
           status: this.userData.status,
-          company: this.userData.company,
-          department: this.userData.department,
           note: this.userData.note,
         },
         is_force_update: true,
@@ -151,7 +156,7 @@ export default Vue.extend({
         .$put('userinfo', {
           email: this.userData.email,
           username: this.userData.username,
-          user_id: this.userData.user_id,
+          user_id: this.userData.user_id[0].user_id,
         })
         .then(() => {
           this.$emit('switchUserModal')

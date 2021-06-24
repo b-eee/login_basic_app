@@ -12,7 +12,19 @@
           <v-col cols="12">
             <v-data-table :headers="headers" :items="items">
               <template #[`item.edit`]="{ item }">
-                <img src="/edit.png" @click="editUserData(item)" />
+                <v-menu offset-y>
+                  <template #activator="{ on, attrs }">
+                    <img src="/edit.png" v-bind="attrs" v-on="on" />
+                  </template>
+                  <v-list>
+                    <v-list-item v-if="item.status === 'suspended'">
+                      <span @click="updateUserData(item)"> activeにする </span>
+                    </v-list-item>
+                    <v-list-item v-else>
+                      <span @click="updateUserData(item)"> suspendにする </span>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
               </template>
             </v-data-table>
           </v-col>
@@ -131,50 +143,49 @@ export default Vue.extend({
   },
 
   created() {
-    this.$axios
-      .$post('applications/samplelogin2/datastores/users/items/search', {
-        conditions: [],
-        page: 1,
-        per_page: 0,
-        use_display_id: true,
-      })
-      .then((data) => {
-        this.items = data.items
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    this.getUsers()
   },
 
   methods: {
-    editUserData(item: any): void {
-      this.userData = item
-      this.statusModal = true
-    },
-
-    updateUserData(): void {
+    updateUserData(item: userData): void {
       const items = {
         item: {
-          status: this.userData.status,
+          status: item.status,
         },
         is_force_update: true,
         return_item_result: true,
         action_id: '',
       }
 
-      if (this.userData.status === 'suspended') {
-        items.action_id = 'suspendAccount'
-      } else {
+      if (item.status === 'suspended') {
         items.action_id = 'active'
+      } else {
+        items.action_id = 'suspendAccount'
       }
 
       this.$axios
         .$post(
-          `applications/samplelogin2/datastores/users/items/edit/${this.userData.i_id}`,
+          `applications/samplelogin2/datastores/users/items/edit/${item.i_id}`,
           items
         )
         .then(() => {
-          this.statusModal = false
+          this.getUsers()
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+
+    getUsers(): void {
+      this.$axios
+        .$post('applications/samplelogin2/datastores/users/items/search', {
+          conditions: [],
+          page: 1,
+          per_page: 0,
+          use_display_id: true,
+        })
+        .then((data) => {
+          this.items = data.items
         })
         .catch((err) => {
           console.log(err)

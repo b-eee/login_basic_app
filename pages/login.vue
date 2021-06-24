@@ -405,12 +405,15 @@ export default Vue.extend({
           item: {
             username: this.$cookies.get('userData').username,
             email: this.$cookies.get('userData').email,
-            user_id: this.$cookies.get('userData').u_id,
+            // user_id: this.$cookies.get('userData').u_id,
           },
           return_item_result: true,
         })
         .then((data) => {
-          this.$cookies.set('userData', data)
+          const userData = this.$cookies.get('userData')
+          userData.i_id = data.item_id
+          this.$cookies.set('userData', userData)
+          console.log(this.$cookies.get('userData'))
           this.getWorkSpace()
         })
         .catch((err) => {

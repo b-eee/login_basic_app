@@ -40,28 +40,25 @@
           </template>
           <v-list>
             <v-list-item>
-              <v-list-title @click="switchUserModal">
-                User Profile
-              </v-list-title>
+              <p @click="switchUserModal">User Profile</p>
             </v-list-item>
             <v-list-item>
-              <v-list-title @click="switchChangePasswordModal">
-                Change Password
-              </v-list-title>
+              <p @click="switchChangePasswordModal">Change Password</p>
             </v-list-item>
             <v-list-item v-if="$cookies.get('is_ws_admin')">
-              <v-list-title @click="pushAdminUsers"> Admin User </v-list-title>
+              <p @click="pushAdminUsers">Admin User</p>
             </v-list-item>
           </v-list>
         </v-menu>
       </v-col>
     </v-row>
     <v-row v-if="!isGuest" class="mt-4 mb-4">
-      <v-col cols="2" offset="1"> page1 </v-col>
-      <v-col cols="2"> page2 </v-col>
-      <v-col cols="2"> page3 </v-col>
-      <v-col cols="2"> page4 </v-col>
-      <v-col cols="2"> page5 </v-col>
+      <v-col cols="1"></v-col>
+      <v-col v-for="i of 5" :key="i" cols="2">
+        <router-link :to="`/page${i}`" class="text-decoration-none black--text"
+          >page{{ i }}</router-link
+        >
+      </v-col>
     </v-row>
 
     <v-dialog v-model="changePasswordModal" width="680" persistent>

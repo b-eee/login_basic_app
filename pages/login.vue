@@ -384,37 +384,13 @@ export default Vue.extend({
           use_display_id: true,
         })
         .then((data) => {
-          if (data.totalItems === 0) {
-            this.createUserDataToMyDB()
-          } else if (data.items[0].status === 'suspended') {
+          if (data.items[0].status === 'suspended') {
             this.errorMsg = 'アクセス権限のないアカウントです'
             this.$cookies.remove('token')
           } else {
             this.$cookies.set('userData', data.items[0])
             this.getWorkSpace()
           }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    },
-
-    createUserDataToMyDB(): void {
-      this.$axios
-        .$post('applications/samplelogin2/datastores/users/items/new', {
-          item: {
-            username: this.$cookies.get('userData').username,
-            email: this.$cookies.get('userData').email,
-            // user_id: this.$cookies.get('userData').u_id,
-          },
-          return_item_result: true,
-        })
-        .then((data) => {
-          const userData = this.$cookies.get('userData')
-          userData.i_id = data.item_id
-          this.$cookies.set('userData', userData)
-          console.log(this.$cookies.get('userData'))
-          this.getWorkSpace()
         })
         .catch((err) => {
           console.log(err)

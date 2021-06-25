@@ -120,12 +120,12 @@ export default Vue.extend({
           value: 'user.field_values[1].value[0].email',
         },
         {
-          text: 'status',
-          value: 'status',
-        },
-        {
           text: 'note',
           value: 'note',
+        },
+        {
+          text: 'status',
+          value: 'status',
         },
         {
           text: '編集',

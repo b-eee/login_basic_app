@@ -16,11 +16,16 @@ export default {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
 
+  env: {
+    apiKey: process.env.API_KEY,
+    baseUrl: process.env.BASE_URL,
+  },
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: ['@/plugins/vee-validate'],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -31,17 +36,26 @@ export default {
     '@nuxt/typescript-build',
     // https://go.nuxtjs.dev/stylelint
     '@nuxtjs/stylelint-module',
+    '@nuxtjs/vuetify',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [
-    // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
-  ],
+  modules: ['@nuxtjs/axios', 'cookie-universal-nuxt'],
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseURL: process.env.BASE_URL,
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    transpile: ['vee-validate/dist/rules'],
+  },
+
+  vuetify: {
+    optionsPath: '@plugins/vuetify.js',
+  },
+
+  generate: {
+    routes: ['/reset_password'],
+  },
 }

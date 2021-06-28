@@ -23,6 +23,8 @@ $ yarn generate
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
 
+.env で、APIのBASE_URLを指定してください。
+
 
 ## License
 

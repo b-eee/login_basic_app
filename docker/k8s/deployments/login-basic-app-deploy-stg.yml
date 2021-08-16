@@ -26,8 +26,8 @@ spec:
     spec:
       terminationGracePeriodSeconds: 600
       containers:
-      - name: beee-login-basic-app
-        image: hexabase.azurecr.io/beee-login-basic-app
+      - name: app
+        image: 348686912638.dkr.ecr.ap-northeast-1.amazonaws.com/beee-login-basic-app
         readinessProbe:
           failureThreshold: 3
           successThreshold: 1
@@ -77,5 +77,5 @@ spec:
         - name: login-basic-app-configs
           configMap:
               name: login-basic-app-configs
-      nodeSelector:
-        type: node00
+      #nodeSelector:
+      #  type: node00

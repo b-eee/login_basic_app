@@ -26,8 +26,10 @@
     "types": [
       "@nuxt/types",
       "@nuxtjs/axios",
-      "@types/node"
-    ]
+      "@types/node",
+      "cookie-universal-nuxt",
+    ],
+    "resolveJsonModule": true,
   },
   "exclude": [
     "node_modules",

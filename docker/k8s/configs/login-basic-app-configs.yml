@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: login-basic-app-configs
+  labels:
+    app: login-basic-app
+    component: microservice
+data:
+  config.js: |-
+    window.env = {
+    };

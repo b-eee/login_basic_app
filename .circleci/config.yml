@@ -1,0 +1,21 @@
+version: 2.1
+orbs:
+  aws-ecr: circleci/aws-ecr@7.0.0
+  aws-eks: circleci/aws-eks@1.1.0
+workflows:
+  build-deploy-to-k8s:
+    jobs:
+      - aws-ecr/build-and-push-image:
+          repo: beee-login-basic-app
+          dockerfile: docker/app/Dockerfile
+          tag: $CIRCLE_SHA1
+      - aws-eks/update-container-image:
+          cluster-name: linker-stg
+          aws-region: $AWS_REGION
+          resource-name: "deployment/login-basic-app"
+          container-image-updates: "app=$AWS_ECR_ACCOUNT_URL/beee-login-basic-app:$CIRCLE_SHA1"
+          get-rollout-status: true
+          watch-rollout-status: true
+          record: true
+          requires: 
+            - aws-ecr/build-and-push-image
